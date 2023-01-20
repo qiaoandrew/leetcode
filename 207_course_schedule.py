@@ -4,22 +4,21 @@ def can_finish(num_courses, prerequisites):
     for course, prereq in prerequisites:
         course_to_prereqs[course].append(prereq)
 
-    visiting = set()
+    cur_path = set()
 
     def dfs(course):
-        if course in visiting:
+        if course in cur_path:
             return False
-
-        if len(course_to_prereqs[course]) == 0:
+        elif course_to_prereqs[course] == []:
             return True
 
-        visiting.add(course)
+        cur_path.add(course)
 
         for prereq in course_to_prereqs[course]:
             if not dfs(prereq):
                 return False
 
-        visiting.remove(course)
+        cur_path.remove(course)
 
         course_to_prereqs[course] = []
 
@@ -30,6 +29,3 @@ def can_finish(num_courses, prerequisites):
             return False
 
     return True
-
-
-print(can_finish(2, [[1, 0]]))
