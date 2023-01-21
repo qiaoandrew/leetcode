@@ -1,9 +1,9 @@
 from collections import deque
 
 
+# loop through and save all rooms with a gate
+# bfs neighbours while incrementing distance from nearest gate
 def walls_and_gates(rooms):
-    displacements = [(0, -1), (0, 1), (-1, 0), (1, 0)]
-
     queue = deque()
 
     for row in range(len(rooms)):
@@ -12,6 +12,8 @@ def walls_and_gates(rooms):
                 queue.append((row, col))
 
     distance = 0
+
+    displacements = [(0, -1), (0, 1), (-1, 0), (1, 0)]
 
     while queue:
         for _ in range(len(queue)):
@@ -30,3 +32,11 @@ def walls_and_gates(rooms):
         distance += 1
 
     return rooms
+
+
+print(
+    walls_and_gates([[2147483647, -1, 0, 2147483647],
+                     [2147483647, 2147483647, 2147483647, -1],
+                     [2147483647, -1, 2147483647, -1],
+                     [0, -1, 2147483647, 2147483647]]))
+print(walls_and_gates([[-1]]))

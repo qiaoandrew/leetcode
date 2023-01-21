@@ -1,5 +1,10 @@
+from collections import defaultdict
+
+
+# make adjacency list
+# dfs each node not in visited set, increment counter
 def count_components(n, edges):
-    adjacency_list = {i: [] for i in range(n)}
+    adjacency_list = defaultdict(list)
 
     for node1, node2 in edges:
         adjacency_list[node1].append(node2)
@@ -17,7 +22,7 @@ def count_components(n, edges):
 
     for node in range(n):
         if node not in visited:
-            res += 1
             dfs(node)
+            res += 1
 
     return res

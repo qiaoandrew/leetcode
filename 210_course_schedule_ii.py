@@ -1,30 +1,34 @@
+from collections import defaultdict
+
+
+# map course to list of prerequisites
+# loop through each course and dfs on it
+# dfs returns whether or not a course is reachable
 def find_order(num_courses, prerequisites):
-    course_to_prereqs = {course: [] for course in range(num_courses)}
+    course_to_prereq = defaultdict(list)
 
     for course, prereq in prerequisites:
-        course_to_prereqs[course].append(prereq)
+        course_to_prereq[course].append(prereq)
 
     order = []
-    cur_path = set()
     visited = set()
+    path = set()
 
     def dfs(course):
-        if course in cur_path:
-            return False
-        elif course in visited:
+        if course in visited:
             return True
+        elif course in path:
+            return False
 
-        cur_path.add(course)
+        path.add(course)
 
-        for prereq in course_to_prereqs[course]:
+        for prereq in course_to_prereq[course]:
             if not dfs(prereq):
                 return False
 
-        cur_path.remove(course)
-
-        visited.add(course)
-
         order.append(course)
+        path.remove(course)
+        visited.add(course)
 
         return True
 
