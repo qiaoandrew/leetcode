@@ -1,10 +1,9 @@
+# dfs
 def partition(s):
     res = []
+    cur = []
 
-    cur_partition = []
-
-    def is_palindrome(s, start, end):
-
+    def is_palindrome(start, end):
         while start < end:
             if s[start] != s[end]:
                 return False
@@ -16,20 +15,17 @@ def partition(s):
 
     def dfs(i):
         if i == len(s):
-            res.append(cur_partition[:])
+            res.append(cur[:])
             return
 
         for j in range(i, len(s)):
-            if is_palindrome(s, i, j):
-                cur_partition.append(s[i:j + 1])
+            if is_palindrome(i, j):
+                cur.append(s[i:j + 1])
 
                 dfs(j + 1)
 
-                cur_partition.pop()
+                cur.pop()
 
     dfs(0)
 
     return res
-
-
-print(partition('aab'))
