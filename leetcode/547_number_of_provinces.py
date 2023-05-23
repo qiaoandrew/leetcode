@@ -10,6 +10,7 @@ class UnionFind:
             return x
 
         self.roots[x] = self.find(self.roots[x])
+
         return self.roots[x]
 
     def union(self, x, y):
@@ -17,15 +18,18 @@ class UnionFind:
         root_y = self.find(y)
 
         if root_x != root_y:
-            if self.ranks[root_x] == self.ranks[root_y]:
+            if self.ranks[root_x] > self.ranks[root_y]:
                 self.roots[root_y] = root_x
-                self.ranks[root_x] += 1
             elif self.ranks[root_x] < self.ranks[root_y]:
                 self.roots[root_x] = root_y
             else:
                 self.roots[root_y] = root_x
+                self.ranks[root_x] += 1
 
             self.count -= 1
+
+    def connected(self, x, y):
+        return self.find(x) == self.find(y)
 
     def get_count(self):
         return self.count
@@ -35,14 +39,15 @@ class UnionFindSolution:
 
     def findCircleNum(self, is_connected):
         n = len(is_connected)
-        unionFind = UnionFind(n)
+
+        union_find = UnionFind(n)
 
         for node1 in range(n - 1):
             for node2 in range(node1 + 1, n):
                 if is_connected[node1][node2] == 1:
-                    unionFind.union(node1, node2)
+                    union_find.union(node1, node2)
 
-        return unionFind.get_count()
+        return union_find.get_count()
 
 
 class DFSSolution:
