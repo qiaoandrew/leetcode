@@ -48,8 +48,8 @@ def top_down_dp(weights):
 
 def bottom_up_dp(weights):
     n = len(weights)
-    total_sum = sum(weights)
-
+    total_sum = sum(weights)    
+    
     dp = [[False for _ in range(total_sum + 1)] for _ in range(n + 1)]
     dp[0][0] = True
 
