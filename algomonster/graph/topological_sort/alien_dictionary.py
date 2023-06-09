@@ -1,51 +1,43 @@
-from heapq import heappop, heappush
+from heapq import heappop, heappush\
+
 
 
 def alien_order(words):
     graph = {}
     for word in words:
         for char in word:
-            graph[char] = []
+            graph[char] = set()
+    indegrees = {char: 0 for char in graph}
 
     for word_idx in range(len(words) - 1):
-        prev, cur = words[word_idx], words[word_idx + 1]
+        first, second = words[word_idx], words[word_idx + 1]
 
         letter_idx = 0
-        while letter_idx < len(prev) and letter_idx < len(cur):
-            if (prev[letter_idx] != cur[letter_idx]):
-                if not cur[letter_idx] in graph[prev[letter_idx]]:
-                    graph[prev[letter_idx]].append(cur[letter_idx])
+        while letter_idx < len(first) and letter_idx < len(second):
+            if first[letter_idx] != second[letter_idx]:
+                if second[letter_idx] not in graph[first[letter_idx]]:
+                    graph[first[letter_idx]].add(second[letter_idx])
+                    indegrees[second[letter_idx]] += 1
                 break
             letter_idx += 1
 
-    indegrees = {node: 0 for node in graph}
-    for node in graph:
-        for neighbor in graph[node]:
-            indegrees[neighbor] += 1
+    min_heap = []
+    for char in indegrees:
+        if indegrees[char] == 0:
+            heappush(min_heap, char)
 
-    order = []
-    priority_queue = []
-
-    for node in indegrees:
-        if indegrees[node] == 0:
-            heappush(priority_queue, node)
-
-    while priority_queue:
-        node = heappop(priority_queue)
-        order.append(node)
-
-        for neighbor in graph[node]:
+    ans = []
+    while min_heap:
+        cur_letter = heappop(min_heap)
+        ans.append(cur_letter)
+        for neighbor in graph[cur_letter]:
             indegrees[neighbor] -= 1
 
             if indegrees[neighbor] == 0:
-                heappush(priority_queue, neighbor)
+                heappush(min_heap, neighbor)
 
     for indegree in indegrees.values():
         if indegree != 0:
             return ''
 
-    return ''.join(order)
-
-
-def alien_order_2(words):
-    graph = {}
+    return ''.join(ans)
