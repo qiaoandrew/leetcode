@@ -1,0 +1,12 @@
+def longest_sub_len_bottom_up(nums):
+    if not nums:
+        return 0
+
+    longest = 1
+    dp = [1] * len(nums)
+    for i in range(1, len(nums)):
+        for j in range(i):
+            if nums[i] > nums[j]:
+                dp[i] = max(dp[i], dp[j] + 1)
+                longest = max(longest, dp[i])
+    return longest
