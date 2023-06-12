@@ -1,75 +1,71 @@
-def brute_force(weights):
-    res = set()
 
-    def dfs(i, cur_sum):
-        if i == len(weights):
-            res.add(cur_sum)
+
+def knapsack_weight_only_top_down(weights):
+    ans = set()
+
+    def dfs(idx, cur_sum):
+        if memo[idx][cur_sum]:
             return
 
-        cur_sum += weights[i]
-        dfs(i + 1, cur_sum)
+        if idx == len(weights):
+            ans.add(cur_sum)
+            return
 
-        cur_sum -= weights[i]
-        dfs(i + 1, cur_sum)
+        dfs(idx + 1, cur_sum + weights[idx])
+        dfs(idx + 1, cur_sum)
+        memo[idx][cur_sum] = True
 
+    total_sum = sum(weights)
+    memo = [[False for _ in range(total_sum + 1)]
+            for _ in range(len(weights) + 1)]
     dfs(0, 0)
 
-    return list(res)
+    return list(ans)
 
 
-def top_down_dp(weights):
+def knapsack_weight_only_bottom_up(weights):
     n = len(weights)
     total_sum = sum(weights)
 
-    res = set()
-
-    memo = [[False for _ in range(total_sum + 1)] for _ in range(n + 1)]
-
-    def dfs(weight_idx, cur_sum):
-        if memo[weight_idx][cur_sum]:
-            return
-
-        if weight_idx == len(weights):
-            res.add(cur_sum)
-            return
-
-        cur_sum += weights[weight_idx]
-        dfs(weight_idx + 1, cur_sum)
-
-        cur_sum -= weights[weight_idx]
-        dfs(weight_idx + 1, cur_sum)
-
-        memo[weight_idx][cur_sum] = True
-
-    dfs(0, 0)
-
-    return list(res)
-
-
-def bottom_up_dp(weights):
-    n = len(weights)
-    total_sum = sum(weights)    
-    
-    dp = [[False for _ in range(total_sum + 1)] for _ in range(n + 1)]
+    dp = [[False for _ in range(total_sum + 1)]
+          for _ in range(n + 1)]
     dp[0][0] = True
 
-    for first_i_elements in range(1, n + 1):
-        for weight in range(0, total_sum + 1):
-            dp[first_i_elements][weight] = dp[first_i_elements][weight] or dp[
-                first_i_elements - 1][weight]
+    for i in range(n + 1):
+        for weight in range(total_sum + 1):
+            dp[i][weight] = dp[i][weight] or dp[i - 1][weight]
 
-            if weight - weights[first_i_elements - 1] >= 0:
-                dp[first_i_elements][weight] = dp[first_i_elements][
-                    weight] or dp[first_i_elements - 1][weight -
-                                                        weights[i - 1]]
+            if weight >= weights[i - 1]:
+                dp[i][weight] = dp[i][weight] or dp[i - 1][weight - weights[i - 1]]
 
-    res = []
-
-    for weight in range(0, total_sum + 1):
+    ans = []
+    for weight in range(total_sum + 1):
         if dp[n][weight]:
-            res.append(weight)
+            ans.append(weight)
 
-    return res
+    return ans
 
 
-print(top_down_dp([1, 3, 3, 5]))
+def knapsack_weight_only_bottom_up_optimized(weights):
+    n = len(weights)
+    total_sum = sum(weights)
+
+    dp = [[False for _ in range(total_sum + 1)] for _ in range(2)]
+    dp[0][0] = True
+
+    for i in range(n + 1):
+        for weight in range(total_sum + 1):
+            dp[1][weight] = dp[1][weight] or dp[0][weight]
+
+            if weight >= weights[i - 1]:
+                dp[1][weight] = dp[1][weight] or dp[0][weight - weights[i - 1]]
+
+        for weight in range(total_sum + 1):
+            dp[0][weight] = dp[1][weight]
+
+    ans = []
+    for weight in range(total_sum + 1):
+        if dp[0][weight]:
+            ans.append(weight)
+
+    return ans
