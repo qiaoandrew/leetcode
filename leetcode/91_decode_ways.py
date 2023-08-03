@@ -1,18 +1,17 @@
-# start from end and loop forwards
-# no decodings if starting at 0
-# otherwise start with the value at the next letter
-# if current is 1 or 2, check if double number decoding is possible
-def num_decodings(s):
-    dp = {len(s): 1}
+def numDecodings(self, s: str) -> int:
+    if s[0] == "0":
+        return 0
 
-    for i in range(len(s) - 1, -1, -1):
-        if s[i] == '0':
-            dp[i] = 0
-        else:
-            dp[i] = dp[i + 1]
-
-        if i < len(s) - 1 and (s[i] == '1' or
-                               (s[i] == '2' and s[i + 1] in '0123456')):
-            dp[i] += dp[i + 2]
-
-    return dp[0]
+    def can_decode(num: str) -> bool:
+        if num[0] == "0":
+            return False
+        return 1 <= int(num) <= 26
+    
+    dp = [0] * (len(s) + 1)
+    dp[0] = 1
+    dp[1] = 1
+    for i in range(1, len(dp)):
+        dp[i] = dp[i - 1] if can_decode(s[i - 1]) else 0
+        if i > 1:
+            dp[i] += dp[i - 2] if can_decode(s[i - 2:i]) else 0
+    return dp[-1]
