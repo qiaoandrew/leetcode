@@ -1,38 +1,23 @@
-from collections import defaultdict
-
-
-# map each course to prerequisites
-# loop through each course, dfs through
-# dfs function will return whether or not the course can be taken
 def can_finish(num_courses, prerequisites):
-    course_to_prereqs = defaultdict(list)
+    adjacency_list = {course: [] for course in range(num_courses)}
+    indegrees = {course: 0 for course in range(num_courses)}
 
-    for course, prereq in prerequisites:
-        course_to_prereqs[course].append(prereq)
-
-    path = set()
-
-    def dfs(course):
-        if course in path:
-            return False
-
-        if course_to_prereqs[course] == []:
-            return True
-
-        path.add(course)
-
-        for prereq in course_to_prereqs[course]:
-            if not dfs(prereq):
-                return False
-
-        course_to_prereqs[course] = []
-
-        path.remove(course)
-
-        return True
-
+    for first, second in prerequisites:
+        adjacency_list[first].append(second)
+        indegrees[second] += 1
+    
+    stack = []
     for course in range(num_courses):
-        if not dfs(course):
-            return False
-
-    return True
+        if indegrees[course] == 0:
+            stack.append(course)
+    
+    doable_courses = 0
+    while stack:
+        course = stack.pop()
+        doable_courses += 1
+        for neighbor in adjacency_list[course]:
+            indegrees[neighbor] -= 1
+            if indegrees[neighbor] == 0:
+                stack.append(neighbor)
+    
+    return doable_courses == num_courses

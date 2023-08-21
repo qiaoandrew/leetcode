@@ -1,39 +1,23 @@
-from collections import defaultdict
-
-
-# map course to list of prerequisites
-# loop through each course and dfs on it
-# dfs returns whether or not a course is reachable
 def find_order(num_courses, prerequisites):
-    course_to_prereq = defaultdict(list)
+    adjacency_list = {course: [] for course in range(num_courses)}
+    indegrees = {course: 0 for course in range(num_courses)}
 
-    for course, prereq in prerequisites:
-        course_to_prereq[course].append(prereq)
+    for course1, course2 in prerequisites:
+        adjacency_list[course1].append(course2)
+        indegrees[course2] += 1
+
+    stack = []
+    for course in range(num_courses):
+        if indegrees[course] == 0:
+            stack.append(course)
 
     order = []
-    visited = set()
-    path = set()
-
-    def dfs(course):
-        if course in visited:
-            return True
-        elif course in path:
-            return False
-
-        path.add(course)
-
-        for prereq in course_to_prereq[course]:
-            if not dfs(prereq):
-                return False
-
+    while stack:
+        course = stack.pop()
         order.append(course)
-        path.remove(course)
-        visited.add(course)
-
-        return True
-
-    for course in range(num_courses):
-        if not dfs(course):
-            return []
-
-    return order
+        for neighbor in adjacency_list[course]:
+            indegrees[neighbor] -= 1
+            if indegrees[neighbor] == 0:
+                stack.append(neighbor)
+    
+    return order if len(order) == num_courses else []
