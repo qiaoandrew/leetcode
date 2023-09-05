@@ -6,25 +6,18 @@ class Node:
         self.random = random
 
 
-# hashmap to map original node to copied node
-# loop through list once to save copied node with values
-# loop through list second time to save next and random pointers
 def copy_random_list(head):
-    original_to_copy = {None: None}
+    original_to_copy = { None: None }
 
     cur = head
-
     while cur:
-        copy = Node(cur.val)
-        original_to_copy[cur] = copy
+        original_to_copy[cur] = Node(cur.val)
         cur = cur.next
-
+    
     cur = head
-
     while cur:
-        copy = original_to_copy[cur]
-        copy.next = original_to_copy[cur.next]
-        copy.random = original_to_copy[cur.random]
+        original_to_copy[cur].next = original_to_copy[cur.next]
+        original_to_copy[cur].random = original_to_copy[cur.random]
         cur = cur.next
-
+    
     return original_to_copy[head]
